@@ -1,0 +1,28 @@
+{
+  "name": "stripe-payment-integration",
+  "version": "1.0.0",
+  "description": "Simple Stripe payment integration with Node.js and Express",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js",
+    "build": "echo 'Build complete'",
+    "vercel-build": "echo 'Vercel build complete'"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "stripe": "^13.10.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["stripe", "payment", "express", "vercel"],
+  "author": "Your Name",
+  "license": "MIT"
+}

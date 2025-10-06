@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Payment Demo</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        #card-element {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+
+        #card-element.StripeElement--focus {
+            border-color: #667eea;
+        }
+
+        #card-errors {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .amount-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .amount-display .currency {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .test-info {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .test-info strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💳 Stripe Payment Demo</h1>
+            <p>Secure payment processing with Stripe</p>
+        </div>
+
+        <div class="test-info">
+            <strong>Test Mode:</strong>
+            Use card number <code>4242 4242 4242 4242</code> with any future expiry date and CVC for testing.
+        </div>
+
+        <form id="payment-form">
+            <div class="form-group">
+                <label for="amount">Amount (USD)</label>
+                <input type="number" id="amount" min="0.50" step="0.01" value="10.00" required>
+            </div>
+
+            <div class="amount-display">
+                <div class="currency">$<span id="display-amount">10.00</span></div>
+            </div>
+
+            <div class="form-group">
+                <label for="card-element">Card Information</label>
+                <div id="card-element">
+                    <!-- Stripe Elements will create form elements here -->
+                </div>
+                <div id="card-errors" role="alert"></div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="submit-btn">
+                <span id="button-text">Pay Now</span>
+                <span id="spinner" class="spinner" style="display: none;"></span>
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing your payment...</p>
+        </div>
+
+        <div class="success" id="success-message">
+            <strong>Payment Successful! 🎉</strong>
+            <p>Thank you for your payment. Your transaction has been completed successfully.</p>
+        </div>
+
+        <div class="error" id="error-message">
+            <strong>Payment Failed</strong>
+            <p id="error-text"></p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Stripe
+        const stripe = Stripe('pk_test_51234567890abcdef...'); // Replace with your publishable key
+        const elements = stripe.elements();
+
+        // Create card element
+        const cardElement = elements.create('card', {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#333',
+                    '::placeholder': {
+                        color: '#aab7c4',
+                    },
+                },
+                invalid: {
+                    color: '#e74c3c',
+                    iconColor: '#e74c3c'
+                }
+            }
+        });
+
+        cardElement.mount('#card-element');
+
+        // Handle real-time validation errors from the card Element
+        cardElement.on('change', ({ error }) => {
+            const displayError = document.getElementById('card-errors');
+            if (error) {
+                displayError.textContent = error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Update amount display
+        document.getElementById('amount').addEventListener('input', (e) => {
+            const amount = parseFloat(e.target.value) || 0;
+            document.getElementById('display-amount').textContent = amount.toFixed(2);
+        });
+
+        // Handle form submission
+        const form = document.getElementById('payment-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const buttonText = document.getElementById('button-text');
+        const spinner = document.getElementById('spinner');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const amount = parseFloat(document.getElementById('amount').value);
+            
+            if (!amount || amount < 0.50) {
+                showError('Amount must be at least $0.50');
+                return;
+            }
+
+            setLoading(true);
+            hideMessages();
+
+            try {
+                // Create payment intent
+                const response = await fetch('/api/create-payment-intent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        amount: amount,
+                        currency: 'usd'
+                    }),
+                });
+
+                const { clientSecret, error } = await response.json();
+
+                if (error) {
+                    throw new Error(error);
+                }
+
+                // Confirm payment
+                const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: {
+                        card: cardElement,
+                    }
+                });
+
+                if (stripeError) {
+                    throw new Error(stripeError.message);
+                }
+
+                if (paymentIntent.status === 'succeeded') {
+                    showSuccess();
+                    form.reset();
+                    cardElement.clear();
+                    document.getElementById('display-amount').textContent = '10.00';
+                }
+
+            } catch (err) {
+                console.error('Payment error:', err);
+                showError(err.message || 'An unexpected error occurred. Please try again.');
+            }
+
+            setLoading(false);
+        });
+
+        function setLoading(loading) {
+            submitBtn.disabled = loading;
+            if (loading) {
+                buttonText.style.display = 'none';
+                spinner.style.display = 'inline-block';
+                document.getElementById('loading').style.display = 'block';
+            } else {
+                buttonText.style.display = 'inline';
+                spinner.style.display = 'none';
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function showSuccess() {
+            document.getElementById('success-message').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('success-message').style.display = 'none';
+            }, 5000);
+        }
+
+        function showError(message) {
+            document.getElementById('error-text').textContent = message;
+            document.getElementById('error-message').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('error-message').style.display = 'none';
+            }, 5000);
+        }
+
+        function hideMessages() {
+            document.getElementById('success-message').style.display = 'none';
+            document.getElementById('error-message').style.display = 'none';
+        }
+
+        // Auto-hide messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Stripe Payment Demo loaded');
+        });
+    </script>
+</body>
+</html>
