@@ -1,5 +1,10 @@
-// Science Trivia AI Chatbot
-let apiKey = localStorage.getItem('openrouter_api_key');
+// Science Trivia AI Chatbot with Multiple AI Provider Support
+let apiKeys = {
+    openrouter: localStorage.getItem('openrouter_api_key'),
+    gemini: localStorage.getItem('gemini_api_key')
+};
+let currentProvider = localStorage.getItem('ai_provider') || 'openrouter';
+
 const chatMessages = document.getElementById('chatMessages');
 const userInput = document.getElementById('userInput');
 const sendButton = document.getElementById('sendButton');
@@ -30,10 +35,44 @@ Be friendly, educational, and passionate about sharing scientific knowledge!`;
 
 // Initialize the application
 function init() {
-    if (apiKey) {
+    // Set up provider UI
+    updateProviderUI();
+    
+    if (hasValidApiKey()) {
         showChatInterface();
     } else {
         showConfigSection();
+    }
+}
+
+function hasValidApiKey() {
+    return apiKeys[currentProvider] && apiKeys[currentProvider].trim() !== '';
+}
+
+function updateProviderUI() {
+    const providerSelect = document.getElementById('provider');
+    const openrouterConfig = document.getElementById('openrouterConfig');
+    const geminiConfig = document.getElementById('geminiConfig');
+    
+    if (providerSelect) {
+        providerSelect.value = currentProvider;
+        
+        // Show/hide appropriate config sections
+        if (currentProvider === 'openrouter') {
+            openrouterConfig.style.display = 'block';
+            geminiConfig.style.display = 'none';
+        } else if (currentProvider === 'gemini') {
+            openrouterConfig.style.display = 'none';
+            geminiConfig.style.display = 'block';
+        }
+        
+        // Load existing API keys
+        if (apiKeys.openrouter) {
+            document.getElementById('openrouterApiKey').value = apiKeys.openrouter;
+        }
+        if (apiKeys.gemini) {
+            document.getElementById('geminiApiKey').value = apiKeys.gemini;
+        }
     }
 }
 
@@ -49,17 +88,35 @@ function showChatInterface() {
 }
 
 function saveApiKey() {
-    const keyInput = document.getElementById('apiKey');
-    const key = keyInput.value.trim();
+    const providerSelect = document.getElementById('provider');
+    const selectedProvider = providerSelect.value;
+    
+    let apiKeyInput, key;
+    
+    if (selectedProvider === 'openrouter') {
+        apiKeyInput = document.getElementById('openrouterApiKey');
+    } else if (selectedProvider === 'gemini') {
+        apiKeyInput = document.getElementById('geminiApiKey');
+    }
+    
+    key = apiKeyInput ? apiKeyInput.value.trim() : '';
     
     if (!key) {
         alert('Please enter a valid API key');
         return;
     }
     
-    apiKey = key;
-    localStorage.setItem('openrouter_api_key', key);
-    keyInput.value = '';
+    // Save the API key and provider
+    apiKeys[selectedProvider] = key;
+    currentProvider = selectedProvider;
+    localStorage.setItem(`${selectedProvider}_api_key`, key);
+    localStorage.setItem('ai_provider', selectedProvider);
+    
+    // Clear input field
+    if (apiKeyInput) {
+        apiKeyInput.value = '';
+    }
+    
     showChatInterface();
 }
 
@@ -88,11 +145,18 @@ async function sendMessage() {
     sendButton.innerHTML = '<span class="loading"></span>';
     
     try {
-        const response = await callOpenRouterAPI(message);
+        let response;
+        if (currentProvider === 'openrouter') {
+            response = await callOpenRouterAPI(message);
+        } else if (currentProvider === 'gemini') {
+            response = await callGeminiAPI(message);
+        } else {
+            throw new Error('Unknown provider selected');
+        }
         addMessage(response, 'bot');
     } catch (error) {
         console.error('Error:', error);
-        addMessage('Sorry, I encountered an error while processing your request. Please check your API key and try again. Error: ' + error.message, 'bot', true);
+        addMessage(`Sorry, I encountered an error while processing your request. Please check your API key and try again. Error: ${error.message}`, 'bot', true);
     } finally {
         // Re-enable send button
         sendButton.disabled = false;
@@ -130,7 +194,7 @@ async function callOpenRouterAPI(userMessage) {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${apiKey}`,
+            'Authorization': `Bearer ${apiKeys.openrouter}`,
             'Content-Type': 'application/json',
             'HTTP-Referer': window.location.origin,
             'X-Title': 'Science Trivia AI Chatbot'
@@ -166,17 +230,67 @@ async function callOpenRouterAPI(userMessage) {
     return data.choices[0].message.content;
 }
 
-// Clear API key function (for debugging/testing)
-function clearApiKey() {
+async function callGeminiAPI(userMessage) {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKeys.gemini}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            contents: [
+                {
+                    parts: [
+                        {
+                            text: `${SYSTEM_PROMPT}\n\nUser: ${userMessage}`
+                        }
+                    ]
+                }
+            ],
+            generationConfig: {
+                temperature: 0.8,
+                topK: 40,
+                topP: 0.95,
+                maxOutputTokens: 500,
+            }
+        })
+    });
+    
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
+        throw new Error('Invalid response format from Gemini API');
+    }
+    
+    return data.candidates[0].content.parts[0].text;
+}
+
+// Provider selection change handler
+function updateProviderSelection() {
+    const providerSelect = document.getElementById('provider');
+    currentProvider = providerSelect.value;
+    localStorage.setItem('ai_provider', currentProvider);
+    updateProviderUI();
+}
+
+// Clear API keys function (updated for multiple providers)
+function clearApiKeys() {
     localStorage.removeItem('openrouter_api_key');
-    apiKey = null;
+    localStorage.removeItem('gemini_api_key');
+    localStorage.removeItem('ai_provider');
+    apiKeys = { openrouter: null, gemini: null };
+    currentProvider = 'openrouter';
     showConfigSection();
 }
 
 // Initialize the app when the page loads
 document.addEventListener('DOMContentLoaded', init);
 
-// Add a settings button to change API key
+// Add a settings button to change API configuration
 function addSettingsButton() {
     const settingsBtn = document.createElement('button');
     settingsBtn.innerHTML = '⚙️ Settings';
@@ -191,9 +305,9 @@ function addSettingsButton() {
     settingsBtn.style.cursor = 'pointer';
     settingsBtn.style.zIndex = '1000';
     settingsBtn.onclick = () => {
-        const changeKey = confirm('Do you want to change your API key?');
-        if (changeKey) {
-            clearApiKey();
+        const changeSettings = confirm('Do you want to change your AI provider or API keys?');
+        if (changeSettings) {
+            clearApiKeys();
         }
     };
     document.body.appendChild(settingsBtn);

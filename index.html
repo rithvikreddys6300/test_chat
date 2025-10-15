@@ -15,10 +15,28 @@
 
         <div class="config-section" id="configSection">
             <div class="api-config">
-                <label for="apiKey">OpenRouter API Key:</label>
-                <input type="password" id="apiKey" placeholder="Enter your OpenRouter API key">
-                <button onclick="saveApiKey()">Save Key</button>
-                <small>Your API key is stored locally in your browser and never sent to any server except OpenRouter.</small>
+                <div class="provider-selection">
+                    <label for="provider">Choose AI Provider:</label>
+                    <select id="provider" onchange="updateProviderSelection()">
+                        <option value="openrouter">OpenRouter (GPT-3.5, GPT-4, etc.)</option>
+                        <option value="gemini">Google Gemini</option>
+                    </select>
+                </div>
+                
+                <div id="openrouterConfig" class="provider-config">
+                    <label for="openrouterApiKey">OpenRouter API Key:</label>
+                    <input type="password" id="openrouterApiKey" placeholder="Enter your OpenRouter API key">
+                    <small>Get your API key from <a href="https://openrouter.ai" target="_blank">openrouter.ai</a></small>
+                </div>
+                
+                <div id="geminiConfig" class="provider-config" style="display: none;">
+                    <label for="geminiApiKey">Google Gemini API Key:</label>
+                    <input type="password" id="geminiApiKey" placeholder="Enter your Gemini API key">
+                    <small>Get your API key from <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></small>
+                </div>
+                
+                <button onclick="saveApiKey()">Save Configuration</button>
+                <small>Your API key is stored locally in your browser and never shared.</small>
             </div>
         </div>
 
