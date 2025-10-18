@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Billing - Science Trivia AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="billing.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <nav class="nav-header">
+                <h1>🧬 Science Trivia AI - Team Billing 💼</h1>
+                <div class="nav-buttons">
+                    <button onclick="window.location.href='index.html'">Chat</button>
+                    <button onclick="window.location.href='team-settings.html'">Team Settings</button>
+                    <button class="active">Billing</button>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Team Info Section -->
+        <section class="team-info-section">
+            <div class="team-card">
+                <div class="team-header">
+                    <h2 id="teamName">Loading...</h2>
+                    <span class="team-plan" id="teamPlan">Loading...</span>
+                </div>
+                <div class="team-stats">
+                    <div class="stat">
+                        <span class="stat-label">Members</span>
+                        <span class="stat-value" id="memberCount">-</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Usage This Month</span>
+                        <span class="stat-value" id="monthlyUsage">-</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Total Cost</span>
+                        <span class="stat-value" id="totalCost">-</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Subscription Plans -->
+        <section class="plans-section">
+            <h2>Subscription Plans</h2>
+            <div class="plans-grid">
+                <div class="plan-card free">
+                    <h3>Free</h3>
+                    <div class="plan-price">$0<span>/month</span></div>
+                    <ul class="plan-features">
+                        <li>✓ 100 messages/month</li>
+                        <li>✓ Up to 3 team members</li>
+                        <li>✓ Basic science topics</li>
+                        <li>✗ Advanced analytics</li>
+                        <li>✗ Priority support</li>
+                    </ul>
+                    <button class="plan-button free-btn" onclick="changePlan('free')">Current Plan</button>
+                </div>
+
+                <div class="plan-card pro">
+                    <h3>Pro</h3>
+                    <div class="plan-price">$29<span>/month</span></div>
+                    <ul class="plan-features">
+                        <li>✓ 5,000 messages/month</li>
+                        <li>✓ Up to 10 team members</li>
+                        <li>✓ All science topics</li>
+                        <li>✓ Usage analytics</li>
+                        <li>✓ Email support</li>
+                    </ul>
+                    <button class="plan-button pro-btn" onclick="changePlan('pro')">Upgrade</button>
+                </div>
+
+                <div class="plan-card enterprise">
+                    <h3>Enterprise</h3>
+                    <div class="plan-price">$99<span>/month</span></div>
+                    <ul class="plan-features">
+                        <li>✓ Unlimited messages</li>
+                        <li>✓ Unlimited team members</li>
+                        <li>✓ Custom science domains</li>
+                        <li>✓ Advanced analytics</li>
+                        <li>✓ 24/7 priority support</li>
+                    </ul>
+                    <button class="plan-button enterprise-btn" onclick="changePlan('enterprise')">Upgrade</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Usage Analytics -->
+        <section class="analytics-section">
+            <h2>Usage Analytics</h2>
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3>Messages This Month</h3>
+                    <div class="usage-bar">
+                        <div class="usage-progress" id="messageProgress"></div>
+                    </div>
+                    <div class="usage-text">
+                        <span id="messagesUsed">0</span> / <span id="messagesLimit">100</span>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3>API Costs</h3>
+                    <div class="cost-breakdown">
+                        <div class="cost-item">
+                            <span>OpenRouter API</span>
+                            <span id="apiCost">$0.00</span>
+                        </div>
+                        <div class="cost-item">
+                            <span>Service Fee</span>
+                            <span id="serviceFee">$0.00</span>
+                        </div>
+                        <div class="cost-item total">
+                            <span>Total</span>
+                            <span id="totalMonthlyCost">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3>Top Users</h3>
+                    <div class="top-users" id="topUsers">
+                        <div class="user-item">
+                            <span>You</span>
+                            <span class="user-usage">42 messages</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Billing History -->
+        <section class="billing-section">
+            <h2>Billing History</h2>
+            <div class="billing-table-container">
+                <table class="billing-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="billingHistory">
+                        <tr>
+                            <td>2024-10-01</td>
+                            <td>Pro Plan - October 2024</td>
+                            <td>$29.00</td>
+                            <td><span class="status-badge paid">Paid</span></td>
+                            <td><button class="download-btn">📄 Invoice</button></td>
+                        </tr>
+                        <tr>
+                            <td>2024-09-01</td>
+                            <td>Pro Plan - September 2024</td>
+                            <td>$29.00</td>
+                            <td><span class="status-badge paid">Paid</span></td>
+                            <td><button class="download-btn">📄 Invoice</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Payment Method -->
+        <section class="payment-section">
+            <h2>Payment Method</h2>
+            <div class="payment-card">
+                <div class="payment-info">
+                    <div class="card-info">
+                        <span class="card-icon">💳</span>
+                        <span class="card-details" id="cardDetails">•••• •••• •••• 4242</span>
+                        <span class="card-brand">Visa</span>
+                    </div>
+                    <div class="payment-actions">
+                        <button onclick="updatePaymentMethod()">Update Card</button>
+                        <button onclick="downloadInvoices()">Download All Invoices</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modals -->
+    <div id="planModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePlanModal()">&times;</span>
+            <h2>Upgrade Plan</h2>
+            <div id="planModalContent">
+                <p>Upgrade to <span id="selectedPlan"></span> plan?</p>
+                <div class="modal-actions">
+                    <button onclick="confirmPlanChange()">Confirm Upgrade</button>
+                    <button onclick="closePlanModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePaymentModal()">&times;</span>
+            <h2>Update Payment Method</h2>
+            <div class="payment-form">
+                <input type="text" placeholder="Card Number" id="cardNumber">
+                <div class="form-row">
+                    <input type="text" placeholder="MM/YY" id="cardExpiry">
+                    <input type="text" placeholder="CVC" id="cardCvc">
+                </div>
+                <input type="text" placeholder="Name on Card" id="cardName">
+                <div class="modal-actions">
+                    <button onclick="savePaymentMethod()">Save Card</button>
+                    <button onclick="closePaymentModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="billing.js"></script>
+</body>
+</html>
