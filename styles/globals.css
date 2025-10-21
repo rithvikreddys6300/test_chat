@@ -250,6 +250,26 @@ header p {
     margin: 10px 0;
 }
 
+/* Settings button */
+.settings-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    z-index: 1000;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.settings-btn:hover {
+    background: #45a049;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     body {
@@ -276,5 +296,11 @@ header p {
     .example-btn {
         width: 100%;
         max-width: 300px;
+    }
+
+    .settings-btn {
+        top: 10px;
+        right: 10px;
+        padding: 8px 12px;
     }
 }

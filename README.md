@@ -1,44 +1,84 @@
-# 🧬 Science Trivia AI Chatbot
+# 🧬 Science Trivia AI Chatbot - Next.js Version
 
-A specialized AI chatbot focused on science trivia and scientific knowledge, powered by the OpenRouter API.
+A modern, responsive AI chatbot built with Next.js, specialized in science trivia and scientific knowledge, powered by the OpenRouter API.
 
 ## 🌟 Features
 
+- **Next.js Framework**: Built with Next.js 14 for optimal performance and SEO
+- **React Components**: Modular, reusable React components with TypeScript
 - **Science-Specialized**: Focused on physics, chemistry, biology, earth sciences, and scientific discoveries
-- **Interactive Interface**: Clean, modern chat interface with real-time messaging
+- **Static Export**: Can be exported as static files for easy deployment
+- **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
 - **OpenRouter Integration**: Uses OpenRouter API for AI responses with customizable models
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
 - **Local Storage**: API key is stored securely in your browser
-- **Example Questions**: Pre-built example questions to get started
+- **TypeScript Support**: Full TypeScript support for better development experience
 - **Error Handling**: Robust error handling for API failures
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
+- Node.js 18.0.0 or later
 - An OpenRouter API key (get one at [openrouter.ai](https://openrouter.ai))
-- A modern web browser
-- No server setup required - runs entirely in the browser!
+
+### Installation
+
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Development Mode**:
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+3. **Production Build**:
+   ```bash
+   npm run build
+   npm start
+   ```
+
+4. **Static Export** (for hosting on static platforms):
+   ```bash
+   npm run build
+   npm run export
+   ```
+   The static files will be in the `out/` directory.
 
 ### Setup Instructions
 
-1. **Clone or Download** the project files:
-   - `index.html` - Main chat interface
-   - `style.css` - Styling and responsive design
-   - `script.js` - JavaScript logic and API integration
-
-2. **Open the Application**:
-   - Simply open `index.html` in your web browser
-   - No installation or server setup required
-
-3. **Configure API Key**:
+1. **Configure API Key**:
    - Enter your OpenRouter API key when prompted
    - The key is stored locally in your browser and never shared
    - You can change the key anytime using the Settings button
 
-4. **Start Chatting**:
+2. **Start Chatting**:
    - Ask science questions or use the example buttons
    - The AI will respond with science-focused answers and trivia
+
+## 📁 Project Structure
+
+```
+science-trivia-ai-nextjs/
+├── components/           # React components
+│   ├── ApiKeyConfig.tsx    # API key configuration
+│   ├── ChatInterface.tsx   # Main chat interface
+│   ├── ExampleQuestions.tsx # Example question buttons
+│   ├── Header.tsx          # App header
+│   └── Message.tsx         # Chat message component
+├── pages/               # Next.js pages
+│   ├── _app.tsx           # App wrapper
+│   ├── _document.tsx      # HTML document
+│   └── index.tsx          # Home page
+├── styles/              # CSS styles
+│   └── globals.css        # Global styles
+├── public/              # Static assets
+├── next.config.js       # Next.js configuration
+├── tsconfig.json        # TypeScript configuration
+└── package.json         # Dependencies and scripts
+```
 
 ## 🧪 Example Questions to Try
 
@@ -82,66 +122,120 @@ The AI specializes in:
 
 ## ⚙️ Technical Details
 
+### Technology Stack
+- **Framework**: Next.js 14
+- **Language**: TypeScript
+- **Styling**: CSS Modules / Global CSS
+- **API**: OpenRouter API
+- **Storage**: Browser LocalStorage
+
 ### API Configuration
 - Uses OpenRouter API for AI responses
-- Default model: GPT-3.5 Turbo (can be modified in `script.js`)
+- Default model: GPT-3.5 Turbo (can be modified in `ChatInterface.tsx`)
 - Temperature: 0.8 for creative yet accurate responses
 - Max tokens: 500 for concise answers
 
-### File Structure
-```
-science-chatbot/
-├── index.html      # Main interface
-├── style.css       # Styling and responsive design
-├── script.js       # JavaScript logic and API calls
-└── README.md       # This documentation
-```
+### Deployment Options
 
-### Browser Compatibility
-- Chrome, Firefox, Safari, Edge (modern versions)
-- Mobile browsers supported
-- No plugins or extensions required
+#### Static Export (Recommended)
+```bash
+npm run build
+npm run export
+```
+Deploy the `out/` folder to:
+- Vercel
+- Netlify
+- GitHub Pages
+- Any static hosting provider
+
+#### Server-side Rendering
+```bash
+npm run build
+npm start
+```
+Deploy to:
+- Vercel (automatic)
+- Netlify
+- AWS, Google Cloud, etc.
+
+### Environment Variables
+No environment variables needed - the app runs entirely in the browser with user-provided API keys.
 
 ## 🛠️ Customization
 
 ### Changing the AI Model
-Edit the `model` parameter in `script.js`:
-```javascript
+Edit the model in `components/ChatInterface.tsx`:
+```typescript
 model: 'gpt-3.5-turbo', // Change to other OpenRouter models
 ```
 
 ### Modifying the System Prompt
-Update the `SYSTEM_PROMPT` variable in `script.js` to change the AI's behavior and focus areas.
+Update the `SYSTEM_PROMPT` constant in `components/ChatInterface.tsx` to change the AI's behavior.
 
 ### Styling Changes
-Modify `style.css` to change colors, fonts, or layout. The design is fully responsive and uses modern CSS features.
+Modify `styles/globals.css` to change colors, fonts, or layout. The design is fully responsive.
+
+### Adding New Components
+Create new components in the `components/` directory and import them in your pages.
 
 ## 🔒 Security & Privacy
 
-- API keys are stored locally in your browser only
+- API keys are stored locally in browser localStorage only
 - No data is sent to any server except OpenRouter
 - All communication is encrypted (HTTPS)
 - No tracking or analytics included
+- Static export option ensures no server-side data processing
+
+## 📱 Browser Compatibility
+
+- Chrome, Firefox, Safari, Edge (modern versions)
+- Mobile browsers supported
+- Progressive Web App capabilities
+- No plugins or extensions required
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-1. **API Key Error**: Make sure your OpenRouter API key is valid and has sufficient credits
-2. **Network Error**: Check your internet connection
-3. **Loading Issues**: Try refreshing the page or clearing browser cache
-4. **Mobile Display**: The interface is responsive, but very old browsers might have issues
+1. **Build Errors**: Make sure you have Node.js 18+ installed
+2. **API Key Error**: Verify your OpenRouter API key is valid and has credits
+3. **Network Error**: Check your internet connection
+4. **TypeScript Errors**: Run `npm run lint` to check for issues
 
-### Error Messages
-The chatbot includes detailed error messages to help diagnose issues:
-- API key problems
-- Network connectivity issues
-- Rate limiting or quota exceeded
-- Invalid responses
+### Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Run linting
+npm run lint
+```
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+1. Connect your GitHub repository to Vercel
+2. Vercel will automatically detect Next.js and deploy
+3. Your app will be available at your-app.vercel.app
+
+### Netlify
+1. Build the static export: `npm run build && npm run export`
+2. Upload the `out/` folder to Netlify
+3. Configure redirects if needed
+
+### Other Platforms
+The static export can be deployed to any static hosting platform.
 
 ## 📝 License
 
-This project is open source and available under the MIT License. Feel free to modify and distribute as needed.
+This project is open source and available under the MIT License.
 
 ## 🤝 Contributing
 
@@ -150,18 +244,28 @@ Feel free to:
 - Suggest new features
 - Improve the science knowledge base
 - Enhance the user interface
-- Add more example questions
+- Add more interactive elements
 
-## 🎯 Future Enhancements
+## 🎯 Next.js Advantages
 
-Potential improvements:
-- Chat history persistence
-- Voice input/output
-- Science quiz mode
-- Image support for diagrams
-- Integration with scientific databases
-- Multi-language support
+- **Performance**: Optimized builds and automatic code splitting
+- **SEO**: Better search engine optimization with server-side rendering
+- **Developer Experience**: Hot reloading, TypeScript support, and great debugging
+- **Deployment**: Easy deployment to Vercel, Netlify, and other platforms
+- **Scalability**: Can easily add API routes, database integration, etc.
+- **Modern React**: Latest React features and patterns
+
+## 🔄 Migration from Vanilla HTML
+
+This Next.js version includes all the functionality of the original HTML/CSS/JS version with these improvements:
+
+- Component-based architecture
+- TypeScript for better code quality
+- Better state management with React hooks
+- Improved performance with Next.js optimizations
+- Better mobile experience
+- Easier maintenance and feature additions
 
 ---
 
-Enjoy exploring the fascinating world of science! 🌟🔬🧬
+Enjoy exploring the fascinating world of science with this modern Next.js application! 🌟🔬🧬
