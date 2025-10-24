@@ -2,6 +2,8 @@
 
 A modern, responsive AI chatbot built with Next.js, specialized in science trivia and scientific knowledge, powered by the OpenRouter API.
 
+*This project was enhanced via MCP (Model Context Protocol).*
+
 ## 🌟 Features
 
 - **Next.js Framework**: Built with Next.js 14 for optimal performance and SEO
